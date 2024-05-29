@@ -1,0 +1,70 @@
+// {
+// 	"version": "2.0.0",
+// 	"tasks": [
+// 		{
+// 			"type": "cppbuild",
+// 			"label": "C/C++: gcc.exe build active file",
+// 			"command": "C:\\MinGW\\bin\\gcc.exe",
+// 			"args": [
+// 				"-fdiagnostics-color=always",
+// 				"-g",
+// 				"${file}",
+// 				"-o",
+// 				"${fileDirname}\\${fileBasenameNoExtension}.exe"
+// 			],
+// 			"options": {
+// 				"cwd": "${fileDirname}"
+// 			},
+// 			"problemMatcher": [
+// 				"$gcc"
+// 			],
+// 			"group": {
+// 				"kind": "build",
+// 				"isDefault": true
+// 			},
+// 			"detail": "compiler: C:\\MinGW\\bin\\gcc.exe"
+// 		}
+// 	]
+// }
+
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-g",
+                "${workspaceFolder}/src/main.c",
+                "-o",
+                "${workspaceFolder}/bin/main.exe",
+                "-I",
+                "${workspaceFolder}/include",
+                "-I",
+                "C://gstreamer/1.0/mingw_x86_64/include/gstreamer-1.0",
+                "-I",
+                "C://gstreamer/1.0/mingw_x86_64/include/glib-2.0",
+                "-I",
+                "C://gstreamer/1.0/mingw_x86_64/lib/glib-2.0/include",
+                "-I",
+                "C:/Users/hyeon/Desktop/libvncserver-master/include",
+                "-L",
+                "C://gstreamer/1.0/mingw_x86_64/lib",
+                "-L",
+                "C:/Users/hyeon/Desktop/libvncserver-master/lib",
+                "-lgstreamer-1.0",
+                "-lgstapp-1.0",
+                "-lgobject-2.0",
+                "-lglib-2.0",
+                "-llibvncclient",
+                "-lx264" // 사용하려는 인코더에 따라 추가 라이브러리가 필요할 수 있습니다
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}
