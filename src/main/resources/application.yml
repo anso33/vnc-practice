@@ -1,0 +1,11 @@
+server:
+  tomcat:
+    threads:
+      min-spare: 100
+      max: 200
+
+spring:
+
+logging:
+  level:
+    com.san.rfbpractice: trace
