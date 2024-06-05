@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>WebSocket Connect</title>
+</head>
+<body>
+<label for="connectCount">Number of WebSocket Connections:</label>
+<input id="connectCount" min="1" type="number" value="30">
+<button id="connectButton">Connect WebSockets</button>
+<br>
+<button id="singleConnectButton">Connect Single WebSocket</button>
+
+<script>
+    document.getElementById('connectButton').addEventListener('click', async function () {
+        let connectCount = document.getElementById('connectCount').value;
+        let startTime = new Date().getTime();
+        let connectedCount = 0;
+
+        let connectPromises = [];
+
+        for (let i = 0; i < connectCount; i++) {
+            connectPromises.push(new Promise((resolve, reject) => {
+                let ws = new WebSocket('ws://localhost:8080/ws');
+
+                ws.onopen = function () {
+                    console.log(`WebSocket ${i + 1} connected`);
+                    connectedCount++;
+                    resolve();
+                };
+
+                ws.onerror = function (error) {
+                    console.log(`WebSocket ${i + 1} error: `, error);
+                    reject();
+                };
+
+                ws.onclose = function () {
+                    console.log(`WebSocket ${i + 1} closed`);
+                };
+            }));
+        }
+
+        try {
+            await Promise.all(connectPromises);
+            let endTime = new Date().getTime();
+            console.log(`Total time for ${connectCount} WebSocket connections: ${endTime - startTime} ms`);
+        } catch (error) {
+            console.log('Error occurred while connecting WebSockets');
+        }
+    });
+
+    document.getElementById('singleConnectButton').addEventListener('click', function () {
+        let ws = new WebSocket('ws://localhost:8080/ws');
+
+        ws.onopen = function () {
+            console.log('Single WebSocket connected');
+        };
+
+        ws.onerror = function (error) {
+            console.log('Single WebSocket error: ', error);
+        };
+
+        ws.onclose = function () {
+            console.log('Single WebSocket closed');
+        };
+    });
+</script>
+</body>
+</html>
