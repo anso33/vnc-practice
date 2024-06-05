@@ -1,4 +1,4 @@
-package com.san.rfbpractice.simple;
+package com.san.rfbpractice.gstreamer;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

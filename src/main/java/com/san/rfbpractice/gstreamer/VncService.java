@@ -1,4 +1,4 @@
-package com.san.rfbpractice.simple;
+package com.san.rfbpractice.gstreamer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
