@@ -13,6 +13,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
@@ -22,6 +25,8 @@ public class TomcatWebSocketTest {
 
     private static final String WS_URI = "ws://localhost:8080/ws";
     private static final int CONNECTION_COUNT = 30;
+
+    Logger logger = LoggerFactory.getLogger(TomcatWebSocketTest.class);
 
     @Test
     public void testWebSocketConnections() throws InterruptedException, ExecutionException {
@@ -36,13 +41,26 @@ public class TomcatWebSocketTest {
         for (int i = 0; i < CONNECTION_COUNT; i++) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 try {
-                    WebSocketSession session = client.doHandshake(new TextWebSocketHandler() {
+                    client.doHandshake(new TextWebSocketHandler() {
                         @Override
                         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+                            logger.info("WebSocket connected, session id: " + session.getId());
                             session.sendMessage(new TextMessage("Hello"));
-                            session.close();
+                        }
+
+                        @Override
+                        protected void handleTextMessage(WebSocketSession session, TextMessage message) throws
+                            Exception {
+                            logger.info("sessionId" + session.getId() + " Received: " + message.getPayload());
+                            // session.close();
                             sessions.add(session);
                             latch.countDown();
+                        }
+
+                        @Override
+                        public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws
+                            Exception {
+                            logger.info("WebSocket closed, session id: " + session.getId());
                         }
                     }, WS_URI).get();
                 } catch (Exception e) {
@@ -61,7 +79,7 @@ public class TomcatWebSocketTest {
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
-        System.out.println("Total time for all connections: " + (duration / 1_000_000) + " ms");
+        logger.info("Total time for all connections: " + (duration / 1_000_000) + " ms");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS), "Not all WebSocket connections were established in time");
 
