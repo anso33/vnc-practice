@@ -11,11 +11,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
 
 import reactor.core.publisher.Mono;
 
 class NettyWebSocketTest {
+
+    Logger logger = LoggerFactory.getLogger(NettyWebSocketTest.class);
 
     @Test
     public void testWebSocketConnections() throws InterruptedException, ExecutionException {
@@ -34,7 +38,7 @@ class NettyWebSocketTest {
                         .thenMany(session.receive()
                             .take(1)
                             .map(msg -> {
-                                System.out.println(
+                                logger.info(
                                     "sessionId" + session.getId() + " Received: " + msg.getPayloadAsText());
                                 return msg;
                             }))
@@ -57,6 +61,6 @@ class NettyWebSocketTest {
         long endTime = System.nanoTime(); // 종료 시간 기록
         long duration = endTime - startTime; // 총 소요 시간 계산
 
-        System.out.println("Total time for all connections: " + (duration / 1_000_000) + " ms");
+        logger.info("Total time for all connections: " + (duration / 1_000_000) + " ms");
     }
 }
